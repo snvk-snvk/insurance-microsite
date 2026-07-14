@@ -100,12 +100,10 @@ export function PolicyDocument({
           <Text style={styles.label}>Payment method</Text>
           <Text style={styles.value}>{policy.paymentMethod.toUpperCase()}</Text>
         </View>
-        {theme.imId && (
-          <View style={styles.row}>
-            <Text style={styles.label}>IM-ID</Text>
-            <Text style={styles.value}>{theme.imId}</Text>
-          </View>
-        )}
+        <View style={styles.row}>
+          <Text style={styles.label}>IM-ID</Text>
+          <Text style={styles.value}>{theme.imId}</Text>
+        </View>
         <View style={styles.row}>
           <Text style={styles.label}>Pincode</Text>
           <Text style={styles.value}>{quote.pincode}</Text>

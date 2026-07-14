@@ -7,7 +7,7 @@ export const ThemeSchema = z.object({
   brandName: z.string().min(1).max(40),
   tagline: z.string().max(80).optional(),
   // Intermediary/agent identifier, printed on the issued policy PDF.
-  imId: z.string().max(40).optional(),
+  imId: z.string().min(1, "IM-ID is required").max(40),
   // A Vercel Blob URL, not an embedded data URI - keeps the theme small
   // enough to always fit in a shareable link regardless of image size.
   logoUrl: z.string().url().optional(),
@@ -23,6 +23,7 @@ export const DEFAULT_THEME: Theme = {
   version: 1,
   brandName: "Suraksha Health",
   tagline: "Health insurance, sorted.",
+  imId: "IMF00000000",
   colors: {
     primary: "#6C2BD9",
     secondary: "#00B8A9",

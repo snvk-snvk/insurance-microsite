@@ -26,11 +26,12 @@ export function ConfiguratorForm() {
         }
       />
       <Input
-        label="IM-ID (optional)"
+        label="IM-ID *"
         placeholder="e.g. IMF12345678"
-        value={theme.imId ?? ""}
+        value={theme.imId}
         maxLength={40}
-        onChange={(e) => updateTheme({ imId: e.target.value || undefined })}
+        onChange={(e) => updateTheme({ imId: e.target.value })}
+        error={theme.imId.trim().length === 0 ? "IM-ID is required" : undefined}
       />
       <LogoUploader />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

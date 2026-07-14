@@ -7,10 +7,10 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-black/5 bg-white/90 px-4 backdrop-blur">
-      {theme.logoDataUrl ? (
+      {theme.logoUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          src={theme.logoDataUrl}
+          src={theme.logoUrl}
           alt={theme.brandName}
           className="h-8 w-auto object-contain"
         />

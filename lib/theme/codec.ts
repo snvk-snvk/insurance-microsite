@@ -1,13 +1,5 @@
 import { ThemeSchema, type Theme } from "./schema";
 
-// This link is meant to be clicked (generated + opened via a button), not
-// manually typed or texted, so the old ~2000-char "SMS-safe" ceiling was
-// unnecessarily strict and silently dropped most real logo uploads.
-// Modern browsers and Vercel's request handling comfortably support URLs
-// well beyond this. 7000 comfortably clears image-compress.ts's guaranteed
-// worst-case logo size (~4200 chars) plus the rest of the theme fields.
-export const MAX_ENCODED_THEME_PARAM_LENGTH = 7000;
-
 function base64UrlEncode(input: string): string {
   const base64 =
     typeof window === "undefined"
@@ -24,24 +16,12 @@ function base64UrlDecode(encoded: string): string {
 }
 
 /**
- * Encodes a theme for use in a shareable `?theme=` URL. If the logo pushes
- * the encoded payload past the length budget, it's dropped from the link
- * only - the local editor/preview still has it via localStorage.
+ * Encodes a theme for use in a shareable `?theme=` URL. The logo is a
+ * Vercel Blob URL (not an embedded data URI), so the encoded theme is
+ * always small - no size budget or drop-logic needed here.
  */
 export function encodeThemeToParam(theme: Theme): string {
-  const full = base64UrlEncode(JSON.stringify(theme));
-  if (full.length <= MAX_ENCODED_THEME_PARAM_LENGTH || !theme.logoDataUrl) {
-    return full;
-  }
-  const withoutLogo: Theme = { ...theme, logoDataUrl: undefined };
-  return base64UrlEncode(JSON.stringify(withoutLogo));
-}
-
-/** Lets the UI warn the user before a logo silently gets dropped from a share link. */
-export function willLinkIncludeLogo(theme: Theme): boolean {
-  if (!theme.logoDataUrl) return false;
-  const full = base64UrlEncode(JSON.stringify(theme));
-  return full.length <= MAX_ENCODED_THEME_PARAM_LENGTH;
+  return base64UrlEncode(JSON.stringify(theme));
 }
 
 export function decodeThemeFromParam(param: string): Theme | null {

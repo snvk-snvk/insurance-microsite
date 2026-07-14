@@ -67,9 +67,9 @@ export function PolicyDocument({
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={styles.headerRow}>
-          {theme.logoDataUrl && (
+          {theme.logoUrl && (
             // eslint-disable-next-line jsx-a11y/alt-text -- react-pdf's Image, not an HTML img
-            <Image src={theme.logoDataUrl} style={styles.logo} />
+            <Image src={theme.logoUrl} style={styles.logo} />
           )}
           <View>
             <Text style={styles.brandName}>{theme.brandName}</Text>

@@ -6,7 +6,9 @@ export const ThemeSchema = z.object({
   version: z.literal(1),
   brandName: z.string().min(1).max(40),
   tagline: z.string().max(80).optional(),
-  logoDataUrl: z.string().optional(),
+  // A Vercel Blob URL, not an embedded data URI - keeps the theme small
+  // enough to always fit in a shareable link regardless of image size.
+  logoUrl: z.string().url().optional(),
   colors: z.object({
     primary: z.string().regex(HEX_RE),
     secondary: z.string().regex(HEX_RE),

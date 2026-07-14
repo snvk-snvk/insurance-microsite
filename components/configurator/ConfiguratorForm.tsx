@@ -26,7 +26,7 @@ export function ConfiguratorForm() {
         }
       />
       <LogoUploader />
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <ColorField
           label="Primary color"
           value={theme.colors.primary}

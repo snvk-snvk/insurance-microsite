@@ -6,16 +6,23 @@
 // @react-pdf/renderer, which decodes images through pdfkit and does not
 // support WebP server-side. PNG is lossless (no quality knob), so instead
 // of lowering quality to hit the size budget, we iteratively shrink the
-// dimensions - fine for logos, which are typically flat/vector-like
-// artwork that PNG compresses well even at small sizes.
+// dimensions.
 const MAX_WIDTH = 160;
 const MAX_HEIGHT = 56;
-const MIN_WIDTH = 40;
-// Sized so a typical logo fits well under the ~6000-char shareable-link
-// budget (see lib/theme/codec.ts) after the theme JSON is base64url-encoded
-// (~4/3 inflation) alongside the other fields. The previous, much tighter
-// budget was silently dropping most real logo uploads from the link.
-const TARGET_MAX_DATA_URL_LENGTH = 3200;
+// Floor on BOTH dimensions independently, not just width. A square or
+// portrait-oriented source photo (e.g. a phone camera JPEG) barely shrinks
+// in height once width alone hits a floor, so the compressed image stayed
+// far larger than intended and got silently dropped from the shareable
+// link. Flooring both dimensions bounds the total pixel count regardless
+// of the source image's aspect ratio.
+const MIN_WIDTH = 32;
+const MIN_HEIGHT = 32;
+// Chosen so even a 32x32 image of pure random noise - the worst case for
+// lossless PNG, totally incompressible - still lands under this: raw PNG
+// is at most (32*3+1)*32 ~= 3104 bytes, and base64 inflates that ~4/3 to
+// ~4140 chars. That guarantees compression always converges instead of
+// silently giving up on busy/photographic uploads.
+const TARGET_MAX_DATA_URL_LENGTH = 4200;
 const SHRINK_FACTOR = 0.85;
 
 export async function compressLogoFile(file: File): Promise<string> {
@@ -34,9 +41,10 @@ export async function compressLogoFile(file: File): Promise<string> {
     ctx.drawImage(bitmap, 0, 0, width, height);
     dataUrl = canvas.toDataURL("image/png");
 
-    if (dataUrl.length <= TARGET_MAX_DATA_URL_LENGTH || width <= MIN_WIDTH) break;
+    const atFloor = width <= MIN_WIDTH && height <= MIN_HEIGHT;
+    if (dataUrl.length <= TARGET_MAX_DATA_URL_LENGTH || atFloor) break;
     width = Math.max(MIN_WIDTH, Math.round(width * SHRINK_FACTOR));
-    height = Math.max(1, Math.round(height * SHRINK_FACTOR));
+    height = Math.max(MIN_HEIGHT, Math.round(height * SHRINK_FACTOR));
   }
 
   bitmap.close();

@@ -4,8 +4,9 @@ import { ThemeSchema, type Theme } from "./schema";
 // manually typed or texted, so the old ~2000-char "SMS-safe" ceiling was
 // unnecessarily strict and silently dropped most real logo uploads.
 // Modern browsers and Vercel's request handling comfortably support URLs
-// well beyond this.
-export const MAX_ENCODED_THEME_PARAM_LENGTH = 6000;
+// well beyond this. 7000 comfortably clears image-compress.ts's guaranteed
+// worst-case logo size (~4200 chars) plus the rest of the theme fields.
+export const MAX_ENCODED_THEME_PARAM_LENGTH = 7000;
 
 function base64UrlEncode(input: string): string {
   const base64 =

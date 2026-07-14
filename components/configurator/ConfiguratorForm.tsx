@@ -25,6 +25,13 @@ export function ConfiguratorForm() {
           updateTheme({ tagline: e.target.value || undefined })
         }
       />
+      <Input
+        label="IM-ID (optional)"
+        placeholder="e.g. IMF12345678"
+        value={theme.imId ?? ""}
+        maxLength={40}
+        onChange={(e) => updateTheme({ imId: e.target.value || undefined })}
+      />
       <LogoUploader />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <ColorField

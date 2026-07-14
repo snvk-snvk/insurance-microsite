@@ -6,6 +6,8 @@ export const ThemeSchema = z.object({
   version: z.literal(1),
   brandName: z.string().min(1).max(40),
   tagline: z.string().max(80).optional(),
+  // Intermediary/agent identifier, printed on the issued policy PDF.
+  imId: z.string().max(40).optional(),
   // A Vercel Blob URL, not an embedded data URI - keeps the theme small
   // enough to always fit in a shareable link regardless of image size.
   logoUrl: z.string().url().optional(),

@@ -1,8 +1,11 @@
 import { ThemeSchema, type Theme } from "./schema";
 
-// Keeps the full shareable URL (origin + path + ?theme=) safely under ~2000
-// chars, the practical limit across browsers, SMS, and chat apps.
-export const MAX_ENCODED_THEME_PARAM_LENGTH = 1800;
+// This link is meant to be clicked (generated + opened via a button), not
+// manually typed or texted, so the old ~2000-char "SMS-safe" ceiling was
+// unnecessarily strict and silently dropped most real logo uploads.
+// Modern browsers and Vercel's request handling comfortably support URLs
+// well beyond this.
+export const MAX_ENCODED_THEME_PARAM_LENGTH = 6000;
 
 function base64UrlEncode(input: string): string {
   const base64 =

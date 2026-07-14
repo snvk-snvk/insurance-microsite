@@ -11,7 +11,11 @@
 const MAX_WIDTH = 160;
 const MAX_HEIGHT = 56;
 const MIN_WIDTH = 40;
-const TARGET_MAX_DATA_URL_LENGTH = 900;
+// Sized so a typical logo fits well under the ~6000-char shareable-link
+// budget (see lib/theme/codec.ts) after the theme JSON is base64url-encoded
+// (~4/3 inflation) alongside the other fields. The previous, much tighter
+// budget was silently dropping most real logo uploads from the link.
+const TARGET_MAX_DATA_URL_LENGTH = 3200;
 const SHRINK_FACTOR = 0.85;
 
 export async function compressLogoFile(file: File): Promise<string> {

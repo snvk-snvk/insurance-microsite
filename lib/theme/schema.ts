@@ -25,7 +25,7 @@ export const DEFAULT_THEME: Theme = {
   tagline: "Health insurance, sorted.",
   imId: "IMF00000000",
   colors: {
-    primary: "#6C2BD9",
+    primary: "#DC2626",
     secondary: "#00B8A9",
   },
 };

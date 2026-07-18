@@ -11,7 +11,7 @@ import {
 import { DEFAULT_THEME, ThemeSchema, type Theme } from "@/lib/theme/schema";
 import { encodeThemeToParam, decodeThemeFromParam } from "@/lib/theme/codec";
 import { readStoredTheme, writeStoredTheme } from "@/lib/theme/storage";
-import { contrastForeground } from "@/lib/utils/contrast-color";
+import { applyThemeToDocument } from "@/lib/theme/apply";
 
 type ThemeContextValue = {
   theme: Theme;
@@ -30,20 +30,6 @@ function parseStoredTheme(raw: string | null): Theme | null {
   } catch {
     return null;
   }
-}
-
-function applyThemeToDocument(theme: Theme) {
-  const root = document.documentElement;
-  root.style.setProperty("--color-primary", theme.colors.primary);
-  root.style.setProperty(
-    "--color-primary-foreground",
-    contrastForeground(theme.colors.primary)
-  );
-  root.style.setProperty("--color-secondary", theme.colors.secondary);
-  root.style.setProperty(
-    "--color-secondary-foreground",
-    contrastForeground(theme.colors.secondary)
-  );
 }
 
 /**

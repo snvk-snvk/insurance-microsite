@@ -87,6 +87,73 @@ export function generateVersionMetrics(seed: string): VersionMetrics {
   };
 }
 
+// --- Per-journey frontend event analytics (mock) ---------------------------
+export type FrontendEvents = {
+  sessions: number;
+  pageViews: number;
+  ctaClicks: number;
+  formFieldFocuses: number;
+  formAbandonPct: number;
+  avgSessionSec: number;
+  bounceRatePct: number;
+  mobileSharePct: number;
+  /** Sessions per day, oldest first, 14-day trend. */
+  dailySessions: number[];
+};
+
+export function generateFrontendEvents(seed: string): FrontendEvents {
+  const rand = seededRandom(`${seed}:frontend`);
+  const sessions = randRange(rand, 3000, 24000);
+  const pageViews = Math.round(sessions * (2.4 + rand() * 1.6));
+  const ctaClicks = Math.round(sessions * (0.35 + rand() * 0.25));
+  const formFieldFocuses = Math.round(ctaClicks * (2 + rand() * 2));
+  const dailyAvg = Math.max(1, Math.round(sessions / 30));
+  return {
+    sessions,
+    pageViews,
+    ctaClicks,
+    formFieldFocuses,
+    formAbandonPct: randRange(rand, 28, 62),
+    avgSessionSec: randRange(rand, 40, 190),
+    bounceRatePct: randRange(rand, 22, 55),
+    mobileSharePct: randRange(rand, 62, 88),
+    dailySessions: Array.from({ length: 14 }, () =>
+      randRange(rand, Math.round(dailyAvg * 0.5), Math.round(dailyAvg * 1.7) + 1)
+    ),
+  };
+}
+
+// --- Per-journey backend analytics (mock) ----------------------------------
+export type BackendMetrics = {
+  quoteApiCalls: number;
+  premiumCalcs: number;
+  pdfsGenerated: number;
+  apiSuccessRatePct: number;
+  avgLatencyMs: number;
+  p95LatencyMs: number;
+  errorCount: number;
+  policiesIssued: number;
+  premiumCollected: number;
+};
+
+export function generateBackendMetrics(seed: string): BackendMetrics {
+  const rand = seededRandom(`${seed}:backend`);
+  const m = generateVersionMetrics(seed);
+  const quoteApiCalls = Math.round(m.quotesGenerated * (1.1 + rand() * 0.5));
+  const avgLatencyMs = randRange(rand, 90, 420);
+  return {
+    quoteApiCalls,
+    premiumCalcs: Math.round(quoteApiCalls * (1.3 + rand() * 0.8)),
+    pdfsGenerated: m.policiesIssued,
+    apiSuccessRatePct: 970 + randRange(rand, 0, 29), // per-mille → 97.0–99.9%
+    avgLatencyMs,
+    p95LatencyMs: Math.round(avgLatencyMs * (1.8 + rand() * 0.9)),
+    errorCount: randRange(rand, 3, 120),
+    policiesIssued: m.policiesIssued,
+    premiumCollected: m.totalPremiumCollected,
+  };
+}
+
 export type MicrositeVersion = {
   id: string;
   brandName: string;

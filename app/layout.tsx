@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Inter, Poppins, Lora } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 
@@ -12,6 +12,16 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
+// Additional display fonts selectable per-journey in the admin editor.
+// Each exposes a CSS var; lib/theme/apply.ts swaps --font-sans between them.
+const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
+const poppins = Poppins({
+  variable: "--font-poppins",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+const lora = Lora({ variable: "--font-lora", subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Suraksha Health - Demo Insurance Microsite",
@@ -52,6 +62,10 @@ const THEME_INIT_SCRIPT = `
       root.style.setProperty('--color-secondary', theme.colors.secondary);
       root.style.setProperty('--color-secondary-foreground', contrast(theme.colors.secondary));
     }
+    var fonts = { geist: 'var(--font-geist-sans)', inter: 'var(--font-inter)', poppins: 'var(--font-poppins)', lora: 'var(--font-lora)' };
+    if (theme.font && fonts[theme.font]) {
+      root.style.setProperty('--font-sans', fonts[theme.font]);
+    }
   } catch (e) {}
 })();
 `;
@@ -64,7 +78,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${poppins.variable} ${lora.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <Script id="theme-init" strategy="beforeInteractive">

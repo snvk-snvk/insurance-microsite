@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTheme } from "@/components/theme/ThemeProvider";
 import { useJourney } from "@/lib/journey/JourneyProvider";
 import { MembersStep } from "@/components/quote/MembersStep";
 import { Input } from "@/components/ui/Input";
@@ -12,6 +13,7 @@ import type { CoveredMember } from "@/lib/journey/schema";
 
 export default function LandingPage() {
   const router = useRouter();
+  const { theme } = useTheme();
   const { setQuote } = useJourney();
   const [pincode, setPincode] = useState("");
   const [members, setMembers] = useState<CoveredMember[]>([
@@ -39,7 +41,7 @@ export default function LandingPage() {
       <main className="flex flex-1 flex-col gap-6 px-4 pb-6">
         <div>
           <h1 className="text-2xl font-bold leading-tight">
-            Health cover that just works.
+            {theme.headline}
           </h1>
           <p className="mt-2 text-sm text-black/60">
             Tell us who you want to protect and get an instant quote.

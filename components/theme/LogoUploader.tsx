@@ -2,7 +2,6 @@
 
 import { useState, type ChangeEvent } from "react";
 import { Upload, X } from "lucide-react";
-import { useTheme } from "./ThemeProvider";
 import { resizeLogoFile } from "@/lib/utils/resize-image";
 
 async function deleteBlob(url: string) {
@@ -15,8 +14,13 @@ async function deleteBlob(url: string) {
   });
 }
 
-export function LogoUploader() {
-  const { theme, updateTheme } = useTheme();
+export function LogoUploader({
+  value,
+  onChange,
+}: {
+  value?: string;
+  onChange: (url: string | undefined) => void;
+}) {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -34,8 +38,8 @@ export function LogoUploader() {
       if (!res.ok) throw new Error("Upload failed");
       const { url } = (await res.json()) as { url: string };
 
-      const previousUrl = theme.logoUrl;
-      updateTheme({ logoUrl: url });
+      const previousUrl = value;
+      onChange(url);
       if (previousUrl) void deleteBlob(previousUrl);
     } catch {
       setError("Couldn't upload that image - try a different file.");
@@ -45,8 +49,8 @@ export function LogoUploader() {
   }
 
   function handleRemove() {
-    const previousUrl = theme.logoUrl;
-    updateTheme({ logoUrl: undefined });
+    const previousUrl = value;
+    onChange(undefined);
     if (previousUrl) void deleteBlob(previousUrl);
   }
 
@@ -55,10 +59,10 @@ export function LogoUploader() {
       <span className="text-sm font-medium">Logo</span>
       <div className="flex items-center gap-3">
         <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-black/10 bg-black/[.02]">
-          {theme.logoUrl ? (
+          {value ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={theme.logoUrl}
+              src={value}
               alt="Logo preview"
               className="h-full w-full object-contain p-1"
             />
@@ -77,7 +81,7 @@ export function LogoUploader() {
             disabled={busy}
           />
         </label>
-        {theme.logoUrl && (
+        {value && (
           <button
             type="button"
             onClick={handleRemove}

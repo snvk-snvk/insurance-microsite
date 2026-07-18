@@ -1,0 +1,16 @@
+# Render.com blueprint — deploys the Next.js app as a Node web service.
+# Runs the same codebase as Vercel; logo storage stays on Vercel Blob (shared
+# store), so the only required secret is BLOB_READ_WRITE_TOKEN.
+services:
+  - type: web
+    name: insurance-microsite
+    runtime: node
+    plan: starter # change to `free` if preferred; confirm at deploy time
+    region: oregon # pick the closest region
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start # `next start` binds to Render's injected $PORT automatically
+    envVars:
+      - key: NODE_VERSION
+        value: 22.11.0
+      - key: BLOB_READ_WRITE_TOKEN
+        sync: false # secret; set in the Render dashboard, use the same token as the Vercel project

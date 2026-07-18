@@ -29,8 +29,26 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+## Deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The app is deployed on both **Vercel** and **Render.com**, running the same codebase against a
+shared **Vercel Blob** logo store.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Vercel
+
+The [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme)
+from the creators of Next.js. See the [Next.js deployment docs](https://nextjs.org/docs/app/building-your-application/deploying).
+
+### Render.com
+
+Configured via [`render.yaml`](./render.yaml) (a Render Blueprint) — a Node web service that runs
+`npm ci && npm run build` then `npm run start`. `next start` binds to Render's injected `$PORT`
+automatically.
+
+Required environment variable (set in the Render dashboard):
+
+- `BLOB_READ_WRITE_TOKEN` — the **same** Vercel Blob read/write token the Vercel project uses, so
+  both hosts read/write the same logo store. Find it in the Vercel project's Blob store settings.
+
+`NODE_VERSION` is pinned to 22 in `render.yaml`; the `engines` field in `package.json` enforces
+Node ≥ 20.9 required by Next.js 16.

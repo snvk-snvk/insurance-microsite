@@ -5,7 +5,7 @@ services:
   - type: web
     name: insurance-microsite
     runtime: node
-    plan: starter # change to `free` if preferred; confirm at deploy time
+    plan: free # free tier; note: instance sleeps after ~15 min idle and cold-starts on next request
     region: oregon # pick the closest region
     buildCommand: npm ci && npm run build
     startCommand: npm run start # `next start` binds to Render's injected $PORT automatically

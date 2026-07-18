@@ -41,9 +41,9 @@ from the creators of Next.js. See the [Next.js deployment docs](https://nextjs.o
 
 ### Render.com
 
-Configured via [`render.yaml`](./render.yaml) (a Render Blueprint) — a Node web service that runs
-`npm ci && npm run build` then `npm run start`. `next start` binds to Render's injected `$PORT`
-automatically.
+Configured via [`render.yaml`](./render.yaml) (a Render Blueprint) — a Node web service built with
+`npm ci && npm run build` (plus copying static assets into the Next.js `standalone` output) and run
+via `node .next/standalone/server.js`, which binds to Render's injected `$PORT`.
 
 Required environment variable (set in the Render dashboard):
 
@@ -52,3 +52,31 @@ Required environment variable (set in the Render dashboard):
 
 `NODE_VERSION` is pinned to 22 in `render.yaml`; the `engines` field in `package.json` enforces
 Node ≥ 20.9 required by Next.js 16.
+
+## Versioned deployments (staging / v2)
+
+To try UI changes **without touching the live production URLs**, work happens on a long-lived
+`staging` branch that deploys to its own separate URLs. `main` is always production.
+
+| Branch | Environment | Vercel | Render |
+|--------|-------------|--------|--------|
+| `main` | production | production domain | `insurance-microsite.onrender.com` |
+| `staging` | staging / v2 | `…-git-staging-<scope>.vercel.app` (stable branch alias) | `insurance-microsite-staging.onrender.com` |
+
+Both environments run the same code and share the same Vercel Blob store.
+
+**Workflow**
+
+1. `git switch staging`, make UI edits, `git push`. Both staging URLs rebuild automatically.
+2. Review on the staging URLs — production URLs keep serving the old UI.
+3. When approved: `git switch main && git merge staging && git push` → production updates.
+4. Keep `staging` around for the next change; occasionally `git merge main` into it to stay current.
+
+**One-time setup**
+
+- _Render_ — after `render.yaml` is on `main`, **Sync** the Blueprint in the Render dashboard; it
+  creates the `insurance-microsite-staging` service (defined in `render.yaml`, pinned to the
+  `staging` branch). Set its `BLOB_READ_WRITE_TOKEN` (same token as production).
+- _Vercel_ — connect the GitHub repo under **Project → Settings → Git** so branch pushes auto-deploy;
+  `staging` then gets the stable branch-alias URL above. Add `BLOB_READ_WRITE_TOKEN` to the
+  **Preview** environment scope, or staging's logo upload API will fail.

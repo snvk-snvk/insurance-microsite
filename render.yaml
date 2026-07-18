@@ -7,9 +7,14 @@
 # the standalone dir (Next doesn't do this automatically), then we run the
 # minimal server directly. NODE_OPTIONS caps the V8 heap so it GCs before the
 # 512MB OOM ceiling; HOSTNAME=0.0.0.0 lets Render reach the process.
+#
+# Two services from one repo: production tracks `main`, staging tracks the
+# long-lived `staging` (v2) branch → a separate insurance-microsite-staging URL.
+# Same config; only name + branch differ. Set BLOB_READ_WRITE_TOKEN on both.
 services:
   - type: web
-    name: insurance-microsite
+    name: insurance-microsite # PRODUCTION → main
+    branch: main
     runtime: node
     plan: free # free tier; note: instance sleeps after ~15 min idle and cold-starts on next request
     region: oregon # pick the closest region
@@ -24,3 +29,21 @@ services:
         value: 0.0.0.0
       - key: BLOB_READ_WRITE_TOKEN
         sync: false # secret; set in the Render dashboard, use the same token as the Vercel project
+
+  - type: web
+    name: insurance-microsite-staging # STAGING → staging (v2) branch
+    branch: staging
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm ci && npm run build && cp -r .next/static .next/standalone/.next/static && cp -r public .next/standalone/public
+    startCommand: node .next/standalone/server.js
+    envVars:
+      - key: NODE_VERSION
+        value: 22.11.0
+      - key: NODE_OPTIONS
+        value: --max-old-space-size=400
+      - key: HOSTNAME
+        value: 0.0.0.0
+      - key: BLOB_READ_WRITE_TOKEN
+        sync: false # secret; set in the Render dashboard, use the same token as production
